@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+implementation-vendor: Inria
+implementation-title: lightserverdemo
+implementation-version: 1.0
+# JavaFX-Preloader-Class: org.occiware.light.PreloaderMain
+JavaFX-Fallback-Class: com.javafx.main.NoJavaFXFallback
+JavaFX-Class-Path: lightserverdemo-1.0.jar
+JavaFX-Application-Class: org.occiware.light.MainApp
+JavaFX-Version: 8.0
+Class-Path: thirdparty.jar .
+Created-By: Christophe Gourdin
+Main-Class: org.occiware.light.MainApp
+

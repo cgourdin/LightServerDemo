@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleName</key>
+	<string>lightserverdemo</string>
+	<key>CFBundleAllowMixedLocalizations</key>
+	<true/>
+	<key>NSHumanReadableCopyright</key>
+	<string>Copyright (C) INRIA 2016</string>
+	<key>JVMRuntime</key>
+	<string>jdk1.8.0_60jdk</string>
+	<key>JVMOptions</key>
+	<array/>
+	<key>JVMAppClasspath</key>
+	<string>thirdparty.jar .</string>
+	<key>JVMMainJarName</key>
+	<string>lightserverdemo-1.0.jar</string>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleVersion</key>
+	<string>100</string>
+	<key>JVMMainClassName</key>
+	<string>org.occiware.light.MainApp</string>
+	<key>JVMPreferencesID</key>
+	<string>org/occiware/light</string>
+	<key>JVMUserOptions</key>
+	<dict/>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleIconFile</key>
+	<string>occiware.icns</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0</string>
+	<key>NSHighResolutionCapable</key>
+	<string>true</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleExecutable</key>
+	<string>lightserverdemo</string>
+	<key>CFBundleIdentifier</key>
+	<string>org.occiware.light</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.utilities</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>10.7.4</string>
+</dict>
+</plist>

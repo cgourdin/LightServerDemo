@@ -1,0 +1,358 @@
+import org.gradle.api.artifacts.*
+
+apply plugin: 'application'
+//
+//subprojects {
+//    apply from: rootProject.file('common.gradle')
+//}
+apply plugin: 'java'
+apply plugin: 'maven'
+
+String mavenGroupId = 'org.occiware.light'
+String mavenVersion = '1.0'
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+// Defines tasks
+task mergedJavadoc(type: Javadoc, description: 'Creates Javadoc from all the projects.') {
+    title = 'All modules'
+    destinationDir = new File(project.buildDir, 'merged-javadoc')
+
+    // Note: The closures below are executed lazily.
+    source {
+       subprojects*.sourceSets*.main*.allSource
+    }
+    classpath.from {
+        subprojects*.configurations*.compile*.copyRecursive({ !(it instanceof ProjectDependency); })*.resolve()
+    }
+}
+task wrapper(type: Wrapper, description: 'Creates and deploys the Gradle wrapper to the current directory.') {
+    gradleVersion = '2.1'
+}
+// Task to clear cache of projects gradle / occiware.
+task('clearDomainCache', type: Delete, group: 'Utilities',
+      description: "Deletes any cached artifacts with the domain of org.occiware in the Gradle or Maven2 cache directories.") << {
+   def props = project.properties
+   def userHome = System.getProperty('user.home')
+   def domain = props['domain'] ?: 'org.occiware'
+   def slashyDomain = domain.replaceAll(/\./, '/')
+   file("${userHome}/.gradle/caches").eachFile { cacheFile ->
+      if (cacheFile.name =~ "^$domain|^resolved-$domain") delete cacheFile.path
+   }
+   delete "${userHome}/.m2/repository/$slashyDomain"
+}
+ext {
+    mainClass = 'org.occiware.light.MainApp'
+    // preloaderClass = 'org.occiware.light.PreloaderMain'
+}
+String os = System.properties['os.name']
+String macos = "Mac OS X"
+String windows = "Windows"
+String linux = "Linux"
+String jdk = System.properties['java.home']
+jdk = jdk.substring(0, jdk.length() - 4)  // to delete "/jre" part.
+println "building on ${os}"
+println "Path of the jdk : ${jdk}"
+String deployPath = "${project.projectDir.absolutePath}" + "${File.separator}" + "package"
+println "deploy path : ${deployPath}"
+String resourcePath = "${deployPath}"
+    
+println "Generic Resource path : ${resourcePath}"
+// Define path resources.
+if (os.contains(macos)) {
+    resourcePath = resourcePath + "${File.separator}" + "macosx"
+}
+if (os.contains(windows)) {
+    resourcePath = resourcePath + "${File.separator}" + "windows"
+}
+if (os.contains(linux)) {
+    resourcePath = resourcePath + "${File.separator}" + "linux"
+}
+println "final Resource path : ${resourcePath}"
+mainClassName = 'org.occiware.light.MainApp'
+version = '1.0'
+println " version : ${version}"
+String appName = 'lightserverdemo'
+String licenceType = 'Open source'
+String copyright = 'Copyright (c) 2016 Inria.'
+String licenceTxtPath = "${deployPath}${File.separator}licence.txt"
+String licenceRtfPath = "${deployPath}${File.separator}LICENCE.rtf"
+String description = 'lightserverdemo'
+String vendor = 'Inria'
+repositories {
+    // mavenCentral();
+    mavenLocal()
+    // if not found we check the central
+    mavenCentral()
+    
+    
+    maven {
+        // for sonatype...
+        url "https://oss.sonatype.org/content/repositories/snapshots"
+    }
+    
+    // on bintray.
+    // jcenter()
+    // You may define additional repositories, or even remove "mavenCentral()".
+    // Read more about repositories here:
+    //   http://www.gradle.org/docs/current/userguide/dependency_management.html#sec:repositories
+}
+
+dependencies {
+    compile 'log4j:log4j:1.2.17'
+    compile 'commons-logging:commons-logging:1.1.1'
+    compile 'commons-lang:commons-lang:2.6'
+   
+    compile ('org.slf4j:slf4j-log4j12:1.7.10') {
+        exclude group: 'log4j'
+    }
+    compile 'com.airhacks:afterburner.fx:1.6.1'
+    compile 'org.controlsfx:controlsfx:8.20.8'
+    compile 'org.glassfish.tyrus:tyrus-server:1.9'
+    compile 'org.glassfish.tyrus:tyrus-container-grizzly-server:1.9'
+    
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDirs = ["src/main/java", "src/main/resources"]
+            includes = ["**/*.xml", "**/*.png", "**/*.jpg", \
+                "**/*.fxml","**/*.css", "**/*.properties", "**/*.csv", "**/*.json", \
+            "**/path1*", "**/path2*", "**/path3*", "**/path4*", "**/path5*","**/*.MF"]
+        }
+    }
+}
+
+task copyToLib(type: Copy) {
+    into "$buildDir/libs"
+    from configurations.runtime
+    
+    //    from { configurations.compile.collect {
+    //            it.isDirectory() ? it : zipTree(it) 
+    //        } 
+    //    }
+    //    with jar
+    // task cleanTempDir(type: Delete) {    
+    // delete fileTree(dir: "tempDir")    
+
+}
+task copyLicenseToLib(type: Copy) {
+    
+    from "$deployPath"
+    into "$buildDir/libs"
+    include 'licence.txt'
+    include 'LICENCE.rtf'
+    exclude '**/*.png'
+    exclude '**/*.icns'
+    exclude '**/*.plist'
+    exclude '**/*.ico'
+    exclude '**/*.bmp'
+}
+// println "${project.archivesBaseName}" + ' --> pour test'
+
+task jar(overwrite: true) << {
+ 
+    // Les bibliothèques sont copiées dans build/libs avant l'exécution de la tache jar.
+    String libsDir = "$buildDir/libs"
+    println "--> building third party jar"
+    String thirdBaseName = 'thirdparty.jar'
+    println "base name for third party dependency : " + thirdBaseName
+    
+    File thirdPartyFileJar = new File(libsDir, thirdBaseName)
+    //    if (thirdPartyFileJar.exist()) {
+    //        return
+    //    }
+    ant.jar(destfile: thirdPartyFileJar, update: 'true') {
+        
+        configurations.compile.files.each { 
+            file ->
+            if (!(file.name.contains(archivesBaseName) || file.name.contains("commun") || file.name.contains(thirdBaseName) || file.name.contains("preloader"))) {
+                zipfileset(src: file) {
+                    exclude(name: '**/META-INF/maven')
+                    exclude(name: '**/META-INF/maven/**/*')
+                    exclude(name: '**/templates')
+                    exclude(name: '**/about_files')
+                    exclude(name: '**/*html')
+                    exclude(name: '**/*readme*')
+                    exclude(name: '**/*txt')
+                    exclude(name: '**/*png')
+                    exclude(name: '**/*bmp')
+                    exclude(name: '**/*jpg')
+                    exclude(name: '**/*gif')
+                    exclude(name: '**/*cmd')
+                    exclude(name: '**/*sh')
+                    exclude(name: '**/*inf')
+                    exclude(name: '**/*SF')
+                    exclude(name: '**/*RSA')
+                    exclude(name: '**/*.vm')
+                    exclude(name: '**/empty.file')
+                }
+            } 
+            
+        }
+    }
+    
+    
+    fileTree(dir: libsDir, include: '*.jar', excludes: [archivesBaseName + "-" + version + ".jar", "commun-" + version + ".jar", thirdBaseName, "preloader-"+ version + ".jar"]).each {
+        f -> 
+        delete f
+    }
+    
+    def classpath = ""
+ 
+    fileTree(dir: libsDir, include: '*.jar', exclude: archivesBaseName + ".jar").each {
+        f ->
+        classpath += f.name + ","
+    }
+ 
+    classpath += "."
+ 
+    // println "Building jar for classpath : ${classpath}"
+    println "outdir : ${buildDir.name}${File.separator}libs"
+//    manifest {
+//        attributes("Manifest-Version"       : "1.0",
+//                "JavaFX-Preloader-Class" : preloaderClassName,
+//                "JavaFX-Version" : '8.0',
+//                "JavaFX-Class-Path" : 'preloader-1.0.jar',
+//                "Created-By"             : vendor,
+//                "Specification-Title"    : appName,
+//                "Specification-Version"  : version,
+//                "Specification-Vendor"   : vendor,
+//                "Implementation-Title"   : appName,
+//                "Implementation-Version" : version,
+//                "Implementation-Vendor"  : vendor,
+//                "Main-Class"             : mainClassName,
+//                "Class-Path"             : classpath 
+//        )
+//    }
+    def javapackager = exec {
+        workingDir "${project.projectDir.absolutePath}"
+ 
+        commandLine "${jdk}/bin/javapackager",
+                  "-createjar", "-v",
+                  "-nocss2bin",
+                  // "-manifestAttrs", "Created-By=${vendor},JavaFX-Application-Class=${mainClassName},JavaFX-Fallback-Class=com.javafx.main.NoJavaFXFallback", // JavaFX-Class-Path=preloader-1.0.jar,
+                  "-appclass", "${mainClassName}",
+                  "-classpath", "${classpath}",
+                 //  "-preloader", "${preloaderClassName}",
+                  "-outdir", "${buildDir.name}${File.separator}libs",
+                  "-outfile", "${project.archivesBaseName}-${version}",
+                  "-srcdir", "${buildDir.name}/classes/main", "-srcfiles", "org",
+                  // "-srcdir", "${buildDir.name}/resources/main" , "-srcfiles", "org",
+                  // "-srcdir", "${buildDir.name}/resources/main" , "-srcfiles", "globalcss",
+                  // "-srcdir", "${buildDir.name}/resources/main" , "-srcfiles", "images",
+                  "-srcdir", "${buildDir.name}/resources/main" , "-srcfiles", "log4j.xml",
+                  // "-srcdir", "${buildDir.name}/resources/main" , "-srcfiles", "mimetypes",
+                  "-srcdir", "${buildDir.name}/resources/main" , "-srcfiles", "org"
+                  
+        // TODO : read doc oracle on java packager and configure proguard.
+    }
+}
+task buildJavaFXBundle << {
+    if (os.contains(macos)) {
+        println "we are on MACOSX, building platform specific !"
+        // build a bundle in dmg format.
+        String category = 'public.app-category.developer-tools' 
+        String id = 'org.occiware.light'
+        
+        def bundleArguments = [
+            // for mac apps, Mac App Store encoded category type.
+                'mac.category' : 'public.app-category.developer-tools',
+            // PList value for CFBundleName
+                'mac.CFBundleName' : 'lightserverdemo',
+            
+            // PList value for CFBundleIdentifier
+                'mac.CFBundleIdentifier' : 'org.occiware.light',
+                
+                'mac.signing-key-user-name' : 'Christophe Gourdin',
+            //'mac.signing-key-developer-id-app' : 'Developer ID Application: Christophe Gourdin' // usually redundant with mac.signing-key-user-name
+                'mac.bundle-id-signing-prefix' : 'org.occiware.',
+
+            // 'licenseFile'
+            // -­ File containing text of a click-­‐through license before DMG is opened up.
+            // 'systemWide'
+            // -­ Whether drag-­‐to link is Applications (true) or Desktop (false).
+                
+            // for PKG bundles
+            //mac.signing-­‐key-­‐developer-­‐id-­‐installer
+            // -­ The full name of the Developer ID installer signing key.
+            // -­ Pass through value to the -­‐s argument for codesign.
+            // 'Service/Daemon bundler Arguments'
+            // -­ Service will be installed so that launchctl can control it.
+            //'mac.signing-key-developer-id-installer' : 'Developer ID Installer: Danno Ferrin', // usually redundant with mac.signing-key-user-name
+
+            // for Mac App Store Ready bundles, à mettre lorsque l'on basculera sur le mac app store.
+            // Build time path to the entitlements file to use during code signing.
+            // 'mac.app-store-entitlements' : 'src/deploy/package/NetworkEntitlements.entitlements',
+                
+            // -­ The full name of the “3rd Party Mac” Application/Installer signing key.
+            // -­ Pass through value to the -­‐s argument for codesign.
+            //'mac.signing-key-app' : '3rd Party Mac Developer Applicaiton: Danno Ferrin', // usually redundant with mac.signing-key-user-name
+            //'mac.signing-key-pkg' : '3rd Party Mac Developer Installer: Danno Ferrin', // usually redundant with mac.signing-key-user-name
+                
+        ]
+
+        String icon = "${resourcePath}${File.separator}lightserverdemo.icns"
+        println "Icons path : ${icon}"
+        
+        def javafxpackager = exec {
+            workingDir "${project.projectDir.absolutePath}"
+ 
+            commandLine "${jdk}/bin/javapackager",
+                  "-deploy", "-v", 
+                  "-native",
+                  "-name", "${appName}",
+                  "-title", "${appName} ${version}",
+                  "-vendor", "${vendor}",
+                  // "-preloader", "${preloaderClassName}",
+                  "-outdir", "${buildDir.name}${File.separator}dist",
+                  "-outfile", "${project.archivesBaseName}",
+                  "-srcdir", "${buildDir.name}${File.separator}${libsDir.name}",
+                  "-appclass", "${mainClassName}",
+                  "-description", "${description}",
+                  "-BlicenseFile=licence.txt" // , 
+                  "-Bruntime=${jdk}"
+                  //"-BjvmProperties=javafx.preloader=${preloaderClassName}" // do not use after jdk8u40.
+                  
+                  
+        }
+        
+    }
+    if (os.contains(windows)) {
+        println "we are on windows, using deploy script spec."
+        def javafxpackager = exec {
+            workingDir "${project.projectDir.absolutePath}"
+     
+            commandLine "${jdk}\\bin\\javapackager",
+                      "-deploy", "-v", 
+                      "-native",
+                      "-name", "${appName}",
+                      "-title", "${appName} ${version}",
+                      "-vendor", "${vendor}",
+     //                 "-preloader", "${preloaderClassName}",
+                      "-outdir", "${buildDir.name}${File.separator}dist",
+                      "-outfile", "${project.archivesBaseName}",
+                      "-srcdir", "${buildDir.name}${File.separator}${libsDir.name}",
+                      "-appclass", "${mainClassName}",
+                      "-description", "${description}",
+                      "-Bruntime=${jdk}${File.separator}jre" // ,
+                      // "-BlicenseFile=LICENCE.rtf",
+                      // "-BjvmProperties=javafx.preloader=${preloaderClassName}" 
+        }
+    }
+    //if (os.contains(linux)) {
+    //}
+    
+}
+
+tasks['jar'].dependsOn 'classes'
+tasks['jar'].dependsOn 'copyToLib'
+tasks['jar'].dependsOn 'copyLicenseToLib'
+tasks['build'].dependsOn 'jar'
+// tasks['assemble'].dependsOn 'jar'
+tasks['buildJavaFXBundle'].dependsOn 'jar'
+tasks['assemble'].dependsOn 'buildJavaFXBundle'

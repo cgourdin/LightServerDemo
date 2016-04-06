@@ -1,0 +1,183 @@
+/*
+    Main css app file.
+*/
+/* 
+    Created on : 23 avr. 2014, 10:49:00
+    Author     : Christophe Gourdin
+*/
+#rootBorderPane {
+    -fx-background-color: #ffffff;
+}
+#horizontaldivider *.line {
+    -fx-background-color: transparent;
+/*    -fx-background-radius: 4;*/
+    -fx-border-style: solid; /* dashed */
+    -fx-border-width: 2px;        
+}
+#horizontaldividerbottom *.line {
+    -fx-background-color: transparent;
+/*    -fx-background-radius: 4;*/
+    -fx-border-style: dashed; /* dashed */
+    -fx-border-width: 2px;        
+}
+#verticalleftdivider *.line {
+    -fx-background-color: transparent;
+/*    -fx-background-radius: 4;*/
+    -fx-border-style: solid;
+    -fx-border-width: 3px;        
+}
+#dashboardMenuButton {
+/*    -fx-text-fill: white;
+    -fx-font-family: "Arial Narrow";
+    -fx-font-weight: bold;
+    -fx-background-color: linear-gradient(#61a2b1, #2A5058);
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );*/
+    /* Dans les ressources... */
+    -fx-graphic: url("../../../../../../resources/images/Dashboard48.png");
+    -fx-background-color: transparent; 
+}
+/* scrollPaneMainLayoutLeft {
+    -fx-border-width: 0;
+}*/
+   
+#dashboardMenuButton:hover {
+    /*-fx-background-color: linear-gradient(#706e6a, #888888);*/
+    /*-fx-base: #395bae;*/
+    -fx-graphic: url("../../../../../../resources/images/Dashboard_clicked48.png");
+}
+
+#dashboardMenuButtonSelected {
+    -fx-graphic: url("../../../../../../resources/images/Dashboard_clicked48.png");
+    -fx-background-color: transparent; 
+}
+#fileManagerMenuButton {
+    -fx-graphic: url("../../../../../../resources/images/Magic48.png");
+    -fx-background-color: transparent; 
+}
+#cloudAccountMenuButton {
+/*    -fx-effect: dropshadow(three-pass-box, #9F9F9F, 15, 0, 0, 0);
+    -fx-animated: true;
+    -fx-text-fill: #505050;*/
+    -fx-graphic: url("../../../../../../resources/images/Cloud48.png");
+    -fx-background-color: transparent; 
+}
+#cloudAccountMenuButton:hover {
+/*    -fx-effect: dropshadow(three-pass-box, #9F9F9F, 15, 0, 0, 0);
+    -fx-animated: true;
+    -fx-text-fill: #505050;*/
+    -fx-graphic: url("../../../../../../resources/images/Cloud_clicked48.png");
+}
+#cloudAccountMenuButtonSelected {
+/*    -fx-effect: dropshadow(three-pass-box, #9F9F9F, 15, 0, 0, 0);
+    -fx-animated: true;
+    -fx-text-fill: #505050;*/
+    -fx-graphic: url("../../../../../../resources/images/Cloud_clicked48.png");
+    -fx-background-color: transparent; 
+}
+   
+#fileManagerMenuButton:hover {
+    /*-fx-background-color: linear-gradient(#706e6a, #888888);*/
+    /*-fx-base: #395bae;*/
+    -fx-graphic: url("../../../../../../resources/images/Magic_clicked48.png");
+}
+#databaseManagerMenuButton {
+    -fx-graphic: url("../../../../../../resources/images/Camera.png");
+    -fx-background-color: transparent; 
+}
+
+#databaseManagerMenuButton:hover {
+    -fx-graphic: url("../../../../../../resources/images/Camera_clicked.png");
+}
+#jobManagerMenuButton {
+    -fx-graphic: url("../../../../../../resources/images/Time48.png");
+    -fx-background-color: transparent; 
+}
+
+#jobManagerMenuButton:hover {
+    -fx-graphic: url("../../../../../../resources/images/Time_clicked48.png");
+}
+
+#appParametersMenuButton {
+    -fx-graphic: url("../../../../../../resources/images/Cogs48.png");
+    -fx-background-color: transparent; 
+}
+
+#appParametersMenuButton:hover {
+    -fx-graphic: url("../../../../../../resources/images/Cogs_clicked48.png");
+}
+
+#aboutAndUpdateMenuButton {
+    -fx-graphic: url("../../../../../../resources/images/Bolt48.png");
+    -fx-background-color: transparent;
+}
+#aboutAndUpdateMenuButton:hover {
+    -fx-graphic: url("../../../../../../resources/images/Bolt_clicked48.png");
+    -fx-background-color: transparent;
+}
+
+#exitApplicationMenuButton {
+    -fx-graphic: url("../../../../../../resources/images/Off48.png");
+    -fx-background-color: transparent;
+}
+#exitApplicationMenuButton:hover {
+    -fx-graphic: url("../../../../../../resources/images/Off_clicked48.png");
+    -fx-background-color: transparent;
+}
+
+/*#fullscreenswitcher {
+    -fx-effect: dropshadow(three-pass-box, #9F9F9F, 15, 0, 0, 0);
+    -fx-animated: true;
+    -fx-text-fill: #505050;
+    -fx-graphic: url("../../../../../../resources/images/Fullscreen.png");
+    -fx-background-color: transparent;
+}
+#fullscreenswitcher:hover {
+    -fx-effect: dropshadow(three-pass-box, #9F9F9F, 15, 0, 0, 0);
+    -fx-animated: true;
+    -fx-text-fill: #505050;
+    -fx-graphic: url("../../../../../../resources/images/Fullscreen_clicked.png");
+}*/
+
+/* pour les shapes... {
+    -fx-stroke: green;
+    -fx-stroke-width: 5;
+    -fx-stroke-dash-array: 0 0 4 0;
+    -fx-stroke-dash-offset: 5;
+    -fx-stroke-line-cap: butt;
+    -fx-border-color: #3366ff;
+    -fx-border-insets: 3;
+    
+    
+}*/
+
+/*.label {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333;
+    -fx-effect: dropshadow( gaussian , rgba(255,255,255,0.5) , 0,0,0,1 );
+}
+
+.button {
+    -fx-text-fill: white;
+    -fx-font-family: "Arial Narrow";
+    -fx-font-weight: bold;
+    -fx-background-color: linear-gradient(#61a2b1, #2A5058);
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );
+}
+
+.button:hover{
+    -fx-base: #395bae;
+}
+
+ Component specific styles 
+
+
+.main-panel {
+    -fx-background-image: url("../../../images/background.jpg");
+}
+
+.hello-message {
+    -fx-text-fill: #AA0000;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow( gaussian , rgba(255,255,255,0.5) , 0,0,0,1 );
+}*/
