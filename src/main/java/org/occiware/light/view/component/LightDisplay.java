@@ -87,5 +87,9 @@ public class LightDisplay extends GridPane {
             this.locationLabel.setTextFill(Color.BLACK);
         }
     }
+    
+    public Light getLightState() {
+        return this.trafLight.getLightState();
+    }
 
 }

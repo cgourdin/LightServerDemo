@@ -181,4 +181,28 @@ public class TrafficLight extends Group {
                 break;
         }
     }
+    
+    /**
+     * State of this light.
+     * @return 
+     */
+    public Light getLightState() {
+        
+        switch (this.state) {
+            case ON:
+                return this.state;
+                
+            case OFF:
+                return this.state;
+            case RED:
+                return Light.OFF;
+            case AMBER:
+                return Light.OFF;
+            case GREEN:
+                return Light.ON;
+        }
+        
+        
+        return this.state;
+    }
 }

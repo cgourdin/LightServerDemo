@@ -97,6 +97,10 @@ public class LightServerEndpoint {
                 case "updateLocation":
                     presenter.updateLightLocation(id, location);
                     break;
+                case "retrieve":
+                    messageReturn = presenter.retrieveLight(id);
+                    break;
+                    
             }
         } catch (LightActionException ex) {
             messageReturn = "Error, Server cannot execute the action : " + action + " --> cause: " + ex.getMessage();

@@ -133,6 +133,7 @@ public class RootViewPresenter implements Initializable {
      *
      * @param id (unique id of the light.
      * @param light
+     * @throws org.occiware.light.exception.LightActionException
      */
     public void updateLightState(String id, Light light) throws LightActionException {
         LightDisplay lightDisplay;
@@ -179,6 +180,20 @@ public class RootViewPresenter implements Initializable {
         }
         return lightDisplay;
 
+    }
+    /**
+     * Retrieve a light with it's id.
+     * @param id
+     * @return a light with format : id;location;State
+     * @throws org.occiware.light.exception.LightActionException
+     */
+    public String retrieveLight(final String id) throws LightActionException {
+        LightDisplay light = findLightById(id);
+        Light state = light.getLightState();
+        String location = light.getLocationLabel().getText();
+        String msg = id + ";" + location + ";" + state.name().toLowerCase();
+        log.info(msg);
+        return msg;
     }
 
     /**

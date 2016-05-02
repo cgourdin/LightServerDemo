@@ -6,4 +6,5 @@ package org.occiware.light.view.component;
  */
 public enum Light {
     GREEN, AMBER, RED, OFF, ON
+
 }
